@@ -6,11 +6,17 @@ import modelo.Historico;
 import modelo.Musica;
 import modelo.Playlist;
 import modelo.RegistroHistorico;
+import persistencia.RepositorioHistorico;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Como o programa exige que o arquivo .mp3 exista, aqui criamos arquivos .mp3
+ * "de mentira" (vazios) numa pasta temporária. Assim roda em qualquer computador.
+ * Quando tiver .mp3 de verdade, troque os caminhos em criarArquivoFalso(...).
+ */
 public class Main {
 
     public static void main(String[] args) {
@@ -19,12 +25,12 @@ public class Main {
             String mp3A = criarArquivoFalso(pasta, "musica1.mp3");
             String mp3B = criarArquivoFalso(pasta, "podcast1.mp3");
 
-            //  Biblioteca e playlist
+            // 1) Biblioteca e playlist
             Biblioteca biblioteca = new Biblioteca();
             Playlist favoritas = biblioteca.criarPlaylist("Favoritas");
             System.out.println("Playlist criada: " + favoritas.getNome());
 
-            //  Faixas 
+            // 2) Faixas 
             Musica musica = new Musica("Bohemian Rhapsody", mp3A, "Queen", "A Night at the Opera");
             EpisodioPodcast episodio = new EpisodioPodcast("Episodio de teste", mp3B, "Podcast Java", 7);
 
@@ -32,28 +38,30 @@ public class Main {
             System.out.println("Adicionou episodio? " + favoritas.adicionarFaixa(episodio));
             System.out.println("Adicionou musica de novo? " + favoritas.adicionarFaixa(musica) + " (false = duplicada)");
 
-            //  Listar a playlist
+            // 3) Listar a playlist
             System.out.println("\n--- " + favoritas.getNome() + " (" + favoritas.getTamanho() + " faixas) ---");
             for (Faixa f : favoritas.getFaixas()) {
                 System.out.println(f.getTipo() + " | " + f.getTitulo() + " | " + f.getDescricao());
             }
 
-            //  Posição salva do podcast
+            // 4) Posição salva do podcast
             episodio.registrarPosicao(125);
             System.out.println("\nDescricao do podcast depois de pausar: " + episodio.getDescricao());
 
-            // Histórico 
-            Historico historico = new Historico(pasta.resolve("historico.txt").toString());
+            // 5) Histórico
+            RepositorioHistorico repositorio = new RepositorioHistorico("dados/historico.txt");
+            Historico historico = repositorio.carregar();
+            System.out.println("\nRegistros que já estavam salvos ao abrir: " + historico.getTotal());
             for (Faixa f : favoritas.getFaixas()) {
                 f.registrarReproducao();
-                historico.registrar(f);
+                repositorio.adicionar(historico.registrar(f));
             }
-            System.out.println("\n--- Historico (" + historico.getTotal() + " registros) ---");
+            System.out.println("--- Historico (" + historico.getTotal() + " registros, ultimos 10) ---");
             for (RegistroHistorico r : historico.getUltimas(10)) {
                 System.out.println(r.getDataFormatada() + " | " + r.getTitulo());
             }
 
-            //6) Casos de erroa
+            // 6) Casos de erro: todos devem ser tratados, sem quebrar o programa
             System.out.println("\n--- Testes de erro ---");
             tentar("arquivo que nao existe", () -> new Musica("X", "nao_existe.mp3", "A", "B"));
             tentar("arquivo que nao e mp3", () -> new Musica("X", mp3A.replace(".mp3", ".txt"), "A", "B"));
