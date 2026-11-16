@@ -33,10 +33,6 @@ public class Historico {
         carregar();
     }
 
-    // =========================================================================
-    // USO PRINCIPAL
-    // =========================================================================
-
     /** Chame quando uma faixa COMEÇAR a tocar. Guarda na lista e grava no arquivo. */
     public void registrar(Faixa faixa) throws PersistenciaException {
         RegistroHistorico r = new RegistroHistorico(
@@ -112,7 +108,7 @@ public class Historico {
     private void carregar() throws PersistenciaException {
         File f = new File(arquivo);
         if (!f.exists()) {
-            return;                 // primeira execução: ainda não há histórico
+            return;                
         }
         try (BufferedReader leitor = new BufferedReader(new FileReader(f, StandardCharsets.UTF_8))) {
             String linha;
@@ -121,7 +117,7 @@ public class Historico {
                     continue;
                 }
                 RegistroHistorico r = RegistroHistorico.fromLinha(linha);
-                if (r != null) {    // linha corrompida é ignorada, o resto continua valendo
+                if (r != null) {   
                     registros.add(r);
                 }
             }
