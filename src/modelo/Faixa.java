@@ -77,6 +77,27 @@ public abstract class Faixa implements Serializable {
     public boolean arquivoExiste() { return new File(caminhoArquivo).isFile(); }
 
     /**
+     * Duas faixas são a mesma se apontam para o mesmo arquivo.
+     * Sem isso, a Playlist (que usa contains) só reconheceria a MESMA instância,
+     * e adicionar o mesmo .mp3 duas vezes pela interface criaria duplicatas.
+     */
+    @Override
+    public boolean equals(Object outro) {
+        if (this == outro) {
+            return true;
+        }
+        if (!(outro instanceof Faixa)) {
+            return false;
+        }
+        return caminhoArquivo.equals(((Faixa) outro).caminhoArquivo);
+    }
+
+    @Override
+    public int hashCode() {
+        return caminhoArquivo.hashCode();
+    }
+
+    /**
      * toString() é usado pela ListView da interface para mostrar cada item.
      * Repare: ele chama getTipo() e getDescricao(), que são ABSTRATOS.
      * Em tempo de execução o Java chama a versão da subclasse real
