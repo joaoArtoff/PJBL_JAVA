@@ -1,6 +1,6 @@
-package Modelo;
+package modelo;
 
-import Excecoes.PersistenciaException;
+import excecoes.PersistenciaException;
 
 import java.io.BufferedReader;
 import java.io.File;

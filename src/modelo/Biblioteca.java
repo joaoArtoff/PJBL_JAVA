@@ -1,6 +1,6 @@
-package Modelo;
+package modelo;
 
-import Excecoes.PlaylistInvalidaException;
+import excecoes.PlaylistInvalidaException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

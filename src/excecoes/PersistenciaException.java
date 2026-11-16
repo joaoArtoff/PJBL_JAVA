@@ -1,4 +1,4 @@
-package Excecoes;
+package excecoes;
 
 /**
  * Lançada quando não conseguimos SALVAR ou CARREGAR a biblioteca do disco.

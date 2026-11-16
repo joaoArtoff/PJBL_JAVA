@@ -1,4 +1,4 @@
-package Excecoes;
+package excecoes;
 
 /** Por ser Exception, e não RuntimeException, é uma checked exception: o compilador obriga quem chama a tratar (try-catch) ou repassar (throws).
  * Usamos para situações que vão acontecer no uso real (MP3 apagado, playlist vazia).

@@ -1,6 +1,6 @@
-package Modelo;
+package modelo;
 
-import Excecoes.FaixaInvalidaException;
+import excecoes.FaixaInvalidaException;
 
 import java.io.File;
 import java.io.Serializable;

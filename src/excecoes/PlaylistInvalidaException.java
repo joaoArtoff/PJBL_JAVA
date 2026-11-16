@@ -1,4 +1,4 @@
-package Excecoes;
+package excecoes;
 
 /** Lançada quando o nome de uma playlist é vazio ou já existe. */
 public class PlaylistInvalidaException extends PlayerException {

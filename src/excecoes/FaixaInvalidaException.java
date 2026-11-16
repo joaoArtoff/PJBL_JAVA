@@ -1,4 +1,4 @@
-package Excecoes;
+package excecoes;
 
 /**
  * Lançada quando uma faixa não pode ser criada ou tocada:
