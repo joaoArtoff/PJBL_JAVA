@@ -6,7 +6,7 @@ import modelo.Historico;
 import modelo.Musica;
 import modelo.Playlist;
 import modelo.RegistroHistorico;
-import persistencia.RepositorioHistorico;
+import modelo.RepositorioHistorico;
 
 import java.io.File;
 import java.nio.file.Files;
