@@ -14,9 +14,9 @@ import java.time.format.DateTimeParseException;
 public class RegistroHistorico {
 
     private final LocalDateTime dataHora;
-    private final String tipo;        // "Musica" ou "Episodio Podcast"
+    private final String tipo;        
     private final String titulo;
-    private final String descricao;   // "Queen - A Night at the Opera"
+    private final String descricao;   
 
     public RegistroHistorico(LocalDateTime dataHora, String tipo, String titulo, String descricao) {
         this.dataHora = dataHora;
@@ -34,14 +34,11 @@ public class RegistroHistorico {
         return dataHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
-    // ---------- objeto <-> linha de texto ----------
-
     /** Formato da linha no .txt:  dataHora;tipo;titulo;descricao */
     public String toLinha() {
         return dataHora + ";" + limpar(tipo) + ";" + limpar(titulo) + ";" + limpar(descricao);
     }
 
-    /** Lê uma linha do .txt. Retorna null se a linha estiver corrompida (ela é ignorada). */
     public static RegistroHistorico fromLinha(String linha) {
         String[] partes = linha.split(";", -1);
         if (partes.length != 4) {
@@ -54,7 +51,6 @@ public class RegistroHistorico {
         }
     }
 
-    // O ";" é o separador do arquivo, então não pode aparecer dentro dos textos.
     private static String limpar(String texto) {
         return texto.replace(";", ",").replace("\r", " ").replace("\n", " ");
     }
