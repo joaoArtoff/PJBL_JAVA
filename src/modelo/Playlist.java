@@ -1,7 +1,7 @@
-package Modelo;
+package modelo;
 
-import Excecoes.FaixaInvalidaException;
-import Excecoes.PlaylistInvalidaException;
+import excecoes.FaixaInvalidaException;
+import excecoes.PlaylistInvalidaException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

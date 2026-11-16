@@ -1,4 +1,4 @@
-package Excecoes;
+package excecoes;
 
 /** Acontece quando o usuário tenta rodar uma playlist vazia.
  * Em vez de dar erro de índice (IndexOutOfBoundsException),

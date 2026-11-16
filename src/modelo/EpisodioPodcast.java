@@ -1,6 +1,6 @@
-package Modelo;
+package modelo;
 
-import Excecoes.FaixaInvalidaException;
+import excecoes.FaixaInvalidaException;
 
 public class EpisodioPodcast extends Faixa {
     private static final long serialVersionUID = 1L;

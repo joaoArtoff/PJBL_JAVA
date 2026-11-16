@@ -1,0 +1,13 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Build
+out/
+bin/
+target/
+*.class
+
+# Dados locais
+*.txt.bak

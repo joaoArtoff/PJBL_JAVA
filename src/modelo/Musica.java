@@ -1,6 +1,6 @@
-package Modelo;
+package modelo;
 
-import Excecoes.FaixaInvalidaException;
+import excecoes.FaixaInvalidaException;
 
 /**
  * Música: uma Faixa que tem artista e álbum.
