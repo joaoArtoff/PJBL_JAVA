@@ -11,3 +11,6 @@ target/
 
 # Dados locais
 *.txt.bak
+
+# Dados gerados ao rodar
+dados/
