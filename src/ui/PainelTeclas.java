@@ -5,15 +5,17 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import modelo.Player;
+import javafx.scene.control.Tooltip;
+import reproducao.PlayerModos;
 
 /**
  * Teclinhas do corpo do aparelho para organizar a biblioteca: criar, remover e importar de uma
  * pasta uma playlist; adicionar e remover faixa. Cada uma só chama o painel que cuida do assunto.
+ * Também tem a tecla do modo de reprodução, que alterna entre sequencial, repetir e aleatório.
  */
 public class PainelTeclas extends GridPane {
 
-    public PainelTeclas(PainelPlaylists playlists, PainelFaixas faixas, Player player) {
+    public PainelTeclas(PainelPlaylists playlists, PainelFaixas faixas, PlayerModos player) {
         setHgap(8);
         setVgap(8);
         setAlignment(Pos.CENTER);
@@ -41,10 +43,19 @@ public class PainelTeclas extends GridPane {
         Button historico = tecla("btnHistorico", "Histórico");
         historico.setOnAction(e -> DialogoHistorico.mostrar(player.getHistorico()));
 
+        // Cada clique passa para o próximo modo; o Player avisa a tela (botões "próxima" etc.).
+        Button modo = tecla("btnModo", "Modo: " + player.getModo().getNome());
+        modo.setTooltip(new Tooltip("Modo de reprodução"));
+        modo.setOnAction(e -> {
+            player.setModo(player.getModo().proximo());
+            modo.setText("Modo: " + player.getModo().getNome());
+        });
+
         add(importarPasta, 0, 1, 2, 1);
-        add(historico, 0, 3, 2, 1);
         add(adicionarFaixa, 0, 2);
         add(removerFaixa, 1, 2);
+        add(modo, 0, 3, 2, 1);
+        add(historico, 0, 4, 2, 1);
 
         for (int i = 0; i < 2; i++) {
             ColumnConstraints coluna = new ColumnConstraints();
