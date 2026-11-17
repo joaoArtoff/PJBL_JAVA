@@ -17,9 +17,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modelo.Biblioteca;
 import modelo.Historico;
-import modelo.Player;
 import modelo.RepositorioBiblioteca;
 import modelo.RepositorioHistorico;
+import reproducao.PlayerModos;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.List;
  * Janela principal. Aqui só se montam as peças e se ligam umas às outras:
  *
  *   Biblioteca ── Playlist ── Faixa      (o modelo, sem nada de interface)
- *   Player ── Reprodutor                 (quem toca; o Player só conhece a interface)
+ *   PlayerModos ── Reprodutor            (quem toca; o Player só conhece a interface)
  *
  * O aparelho tem três regiões: a tampa do CD com o volume (PainelDisco), a tela LCD
  * (Visor, que reúne PainelPlaylists, PainelFaixas e VisorAgora) e o click wheel com as
@@ -43,7 +43,7 @@ public class AppPlayer extends Application {
     private static final String ARQUIVO_HISTORICO = "dados/historico.txt";
     private static final String ARQUIVO_BIBLIOTECA = "dados/biblioteca.dat";
 
-    private Player player;
+    private PlayerModos player;
     private Biblioteca biblioteca;
     private boolean salvarAoFechar = true;
 
@@ -69,7 +69,7 @@ public class AppPlayer extends Application {
             falhasAoAbrir.add(e);
         }
 
-        player = new Player(new ReprodutorMp3(), historico, repositorio);
+        player = new PlayerModos(new ReprodutorMp3(), historico, repositorio);
 
         PainelPlaylists playlists = new PainelPlaylists(biblioteca, player);
         PainelFaixas faixas = new PainelFaixas(player, playlists.selecionadaProperty());
