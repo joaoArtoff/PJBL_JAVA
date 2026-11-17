@@ -1,7 +1,6 @@
 package modelo;
 
 import excecoes.FaixaInvalidaException;
-import excecoes.PersistenciaException;
 import excecoes.PlayerException;
 import excecoes.PlaylistInvalidaException;
 import excecoes.PlaylistVaziaException;
@@ -72,12 +71,8 @@ public class Player {
 
         this.faixaAtual = faixa;
         this.tocando = true;
-        faixa.registrarReproducao();
         aoMudar.run();
-        registrarNoHistorico(faixa);
-    }
-
-    private void registrarNoHistorico(Faixa faixa) throws PersistenciaException {
+        // Por último: se o disco falhar, a faixa já está tocando e o erro de gravação vai para a tela.
         repositorio.adicionar(historico.registrar(faixa));
     }
 
@@ -98,14 +93,14 @@ public class Player {
     }
 
     public void proxima() throws PlayerException {
-        if (playlist != null && indice + 1 < playlist.getTamanho()) {
-            iniciar(playlist, indice + 1);
+        if (temProxima()) {
+            iniciar(playlist, getIndiceAtual() + 1);
         }
     }
 
     public void anterior() throws PlayerException {
-        if (playlist != null && indice > 0) {
-            iniciar(playlist, indice - 1);
+        if (temAnterior()) {
+            iniciar(playlist, getIndiceAtual() - 1);
         }
     }
 
@@ -130,21 +125,19 @@ public class Player {
             faixaAtual.registrarPosicao(reprodutor.getPosicao());
             reprodutor.parar();
         }
-        faixaAtual = null;
-        tocando = false;
+        soltarFaixaAtual();
     }
 
     private void faixaTerminou() {
         Faixa terminada = faixaAtual;
-        faixaAtual = null;
-        tocando = false;
+        soltarFaixaAtual();
         if (terminada != null) {
             reprodutor.parar();
             terminada.registrarPosicao(0);   // terminou: da próxima vez começa do início
         }
         try {
-            if (playlist != null && indice + 1 < playlist.getTamanho()) {
-                iniciar(playlist, indice + 1);
+            if (temProxima()) {
+                iniciar(playlist, getIndiceAtual() + 1);
             } else {
                 aoMudar.run();
             }
@@ -154,20 +147,46 @@ public class Player {
     }
 
     private void reproducaoFalhou(FaixaInvalidaException erro) {
-        faixaAtual = null;
-        tocando = false;
+        soltarFaixaAtual();
         aoMudar.run();
         aoErro.accept(erro);
+    }
+
+    /** Esquece a faixa atual, mas guarda em que lugar da playlist ela estava (para anterior/próxima). */
+    private void soltarFaixaAtual() {
+        indice = getIndiceAtual();
+        faixaAtual = null;
+        tocando = false;
     }
 
     public double getPosicao() { return reprodutor.getPosicao(); }
     public double getDuracao() { return reprodutor.getDuracao(); }
     public Faixa getFaixaAtual() { return faixaAtual; }
     public Playlist getPlaylistAtual() { return playlist; }
-    public int getIndiceAtual() { return indice; }
     public boolean isTocando() { return tocando; }
-    public boolean temProxima() { return playlist != null && indice + 1 < playlist.getTamanho(); }
-    public boolean temAnterior() { return playlist != null && indice > 0; }
+    public boolean temProxima() { return playlist != null && getIndiceAtual() + 1 < playlist.getTamanho(); }
+    public boolean temAnterior() { return playlist != null && getIndiceAtual() > 0; }
+
+    /**
+     * Posição (a partir de 0) da faixa atual na playlist. É procurada a cada chamada, e não só
+     * guardada, porque a Playlist pode mudar enquanto a faixa toca (por exemplo, o usuário remove
+     * uma faixa que vinha antes) e um número guardado passaria a apontar para a faixa errada.
+     * Sem faixa tocando (parado ou depois de um erro), vale o último lugar em que o player esteve.
+     */
+    public int getIndiceAtual() {
+        if (faixaAtual != null) {
+            int posicao = playlist.indexOf(faixaAtual);
+            if (posicao >= 0) {
+                return posicao;
+            }
+        }
+        return indice;
+    }
+
+    /** Quem mexeu na playlist por fora (adicionou ou removeu faixa) avisa aqui, para a tela se atualizar. */
+    public void playlistMudou() {
+        aoMudar.run();
+    }
 
     /** A interface se registra aqui para ser avisada de qualquer mudança de estado. */
     public void setAoMudar(Runnable acao) {
