@@ -26,11 +26,19 @@
             <artifactId>javafx-media</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <!-- Mantém a estrutura atual do repositório: os fontes ficam em src/ e os recursos em recursos/ -->
+        <!-- Mantém a estrutura atual do repositório: os fontes ficam em src/, os recursos em recursos/ e os testes em teste/.
+             Os testes ficam fora de src/ porque tudo dentro de src/ é compilado como código do programa. -->
         <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>teste</testSourceDirectory>
         <resources>
             <resource>
                 <directory>recursos</directory>
@@ -38,6 +46,11 @@
         </resources>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
