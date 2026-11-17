@@ -19,6 +19,8 @@ as playlists e o histórico de reproduções são lembrados entre uma execução
 - **Tocar de verdade**: play/pausa, parar, faixa anterior e próxima, barra de progresso (clique ou arraste) e volume.
   Ao terminar uma faixa, a próxima começa sozinha.
 - O **podcast lembra onde parou**: ao pausar, trocar de faixa ou fechar, a posição fica guardada e ele recomeça dali.
+- **Modos de reprodução** (botão **Modo**): sequencial (para na última faixa), repetir playlist e aleatório
+  (sorteia a próxima sem repetir a atual). Vale também quando uma faixa termina sozinha.
 - **Histórico** de tudo que foi tocado, gravado em arquivo de texto.
 - **Playlists salvas** ao fechar a janela e carregadas ao abrir.
 - Erros tratados com mensagem na tela, sem fechar o programa (arquivo apagado, arquivo que não é MP3, playlist vazia,
@@ -83,6 +85,7 @@ src/
 │               RegistroHistorico, Player, Reprodutor, ImportadorDePasta, RepositorioHistorico,
 │               RepositorioBiblioteca
 ├── audio/      ReprodutorMp3: toca MP3 com o JavaFX Media
+├── reproducao/ ModoReproducao (enum) e PlayerModos (Player que obedece ao modo escolhido)
 ├── ui/         interface JavaFX (AppPlayer e os painéis da tela)
 └── Main.java   demonstração do modelo no console
 recursos/       estilo.css (aparência da interface)
@@ -116,6 +119,12 @@ formam uma hierarquia, com `PlayerException` na raiz.
 `getTipo()`, `getPosicaoInicial()` e `registrarPosicao()` respondem de forma diferente em cada subclasse (a música
 começa sempre do zero e ignora a posição; o podcast guarda e devolve onde parou). A mesma linha da lista mostra música
 e podcast.
+
+**Modos de reprodução.** `PlayerModos` **herda** de `Player` porque é um Player com uma regra a mais: reaproveita tudo
+(carregar, tocar, pausar, histórico, posição do podcast) e só sobrescreve o que depende do modo (`proxima`, `anterior`,
+`temProxima` e o que fazer quando a faixa acaba). A tela usa `PlayerModos` como se fosse um `Player`. `ModoReproducao`
+é um `enum` porque são só três opções fixas, sem dados próprios; cada uma decide o índice da próxima faixa em
+`proximoIndice`, o que deixa a regra testável sem áudio (`teste/ModoReproducaoTest.java`).
 
 **Abstração e contratos.**
 - `Faixa` é **abstrata**, com `getDescricao()` e `getTipo()` abstratos, porque não existe uma "faixa genérica":

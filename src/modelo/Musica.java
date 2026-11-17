@@ -16,7 +16,7 @@ public class Musica extends Faixa{
 
     public Musica(String titulo, String caminhoArquivo, String artista, String album) throws FaixaInvalidaException {
         super(titulo, caminhoArquivo);
-        // CORRIGIDO: usar os setters, senão o valor padrão "Artista desconhecido" nunca era aplicado
+        // Pelos setters, para aplicar os valores padrão quando artista/álbum vierem vazios
         setArtista(artista);
         setAlbum(album);
     }

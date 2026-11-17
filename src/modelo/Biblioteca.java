@@ -19,7 +19,6 @@ public class Biblioteca implements Serializable {
 
     private ArrayList<Playlist> playlists;
 
-    // CORRIGIDO: o construtor recebia um ArrayList que era ignorado; agora não recebe nada
     public Biblioteca() {
         this.playlists = new ArrayList<>();
     }
@@ -30,7 +29,6 @@ public class Biblioteca implements Serializable {
      */
     public Playlist criarPlaylist(String nome) throws PlaylistInvalidaException {
         if (buscarPorNome(nome) != null ){
-            // CORRIGIDO: agora usa a exceção própria (antes era IllegalArgumentException)
             throw new PlaylistInvalidaException("Já existe uma playlist chamada \"" + nome.trim() + "\".");
         }
         Playlist nova = new Playlist(nome);

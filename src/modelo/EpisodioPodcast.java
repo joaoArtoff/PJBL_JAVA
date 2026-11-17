@@ -36,12 +36,12 @@ public class EpisodioPodcast extends Faixa {
     @Override
     public String getTipo() { return "Episodio Podcast"; }
     @Override
-    public double getPosicaoInicial() { return posicaoSalva; }   // CORRIGIDO: devolvia 0 (o podcast nunca retomava)
+    public double getPosicaoInicial() { return posicaoSalva; }
 
     @Override
     public void registrarPosicao(double segundos) {
         //Para não aceitar valor negativo
-        this.posicaoSalva = Math.max(0, segundos);   // CORRIGIDO: era += (somava as posições em vez de guardar a última)
+        this.posicaoSalva = Math.max(0, segundos);
     }
 
     //Transforma 125.0 segundos em "2:05".

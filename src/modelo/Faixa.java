@@ -23,11 +23,9 @@ public abstract class Faixa implements Serializable {
         if (caminho == null || caminho.isBlank()) {
             throw new FaixaInvalidaException("Nenhum arquivo informado");
         }
-        // CORRIGIDO: faltava o "!" (antes recusava justamente os arquivos .mp3)
         if (!caminho.toLowerCase().endsWith(".mp3")) {
             throw new FaixaInvalidaException("O arquivo precisa ser .mp3: " + caminho);
         }
-        // CORRIGIDO: era isDirectory() (aceitava PASTA e recusava arquivo); o certo é isFile()
         if (!new File(caminho).isFile()) {
             throw new FaixaInvalidaException("Arquivo não encontrado:  " + caminho);
         }
@@ -43,14 +41,14 @@ public abstract class Faixa implements Serializable {
      * De onde a reprodução deve começar (em segundos).
      * Padrão: do início. O podcast sobrescreve.
      */
-    public double getPosicaoInicial(){ return 0; }   // CORRIGIDO: nome era "Incial"
+    public double getPosicaoInicial(){ return 0; }
 
     /**
      * Chamado pelo Player quando a faixa é pausada/parada/trocada,
      * informando em que segundo ela estava.
      * Padrão: não faz nada (música não precisa de lembrar). O podcast sobrescreve.
      */
-    public void registrarPosicao(double segundos) {};
+    public void registrarPosicao(double segundos) { }
 
     //Gets para pegar o título escolhido e o caminho do arquivo.
     public String getTitulo() { return titulo; }

@@ -16,9 +16,6 @@ import java.util.function.Consumer;
  * Extende o Player, e troca somente o que depende do modo de reprodução,
  * como ordem das faixas, quando a faixa acaba, e o que o anterior faz.
  * A interface gráfica usa o PlayerModos sem saber a diferença do Player
- *
- * Notifica ao OuvintePlayer (eventos faixaIniciada / reproducaoParada / erroReproducao),
- * montado em cima do setAoMudar e do setAoErro, que continuam funcionando pra tela
  */
 public class PlayerModos extends Player {
 
@@ -28,15 +25,11 @@ public class PlayerModos extends Player {
     private final Reprodutor audio;
 
     private ModoReproducao modo = ModoReproducao.SEQUENCIAL;
-    private OuvintePlayer ouvinte;
     private double volume = 0.8;
 
-    // O que a tela registrou; o Player guarda um "embrulho" que repassa para estes e para o ouvinte.
+    // O que a tela registrou; o Player guarda um "embrulho" que repassa para estes.
     private Runnable aoMudarTela = () -> { };
     private Consumer<PlayerException> aoErroTela = e -> { };
-
-    private Faixa ultimaNotificada;
-    private boolean iniciandoPorPedido;
 
     public PlayerModos(Reprodutor reprodutor, Historico historico, RepositorioHistorico repositorio) {
         super(reprodutor, historico, repositorio);
@@ -67,17 +60,6 @@ public class PlayerModos extends Player {
             throw new FaixaInvalidaException("Essa faixa não está na playlist.");
         }
         tocar(playlist, indice);
-    }
-
-    @Override
-    public void tocar(Playlist playlist, int indice) throws PlayerException {
-        // Pedido novo: o ouvinte deve receber faixaIniciada mesmo se for a mesma faixa de novo.
-        iniciandoPorPedido = true;
-        try {
-            super.tocar(playlist, indice);
-        } finally {
-            iniciandoPorPedido = false;
-        }
     }
 
     // Proxima / Anterior
@@ -164,29 +146,13 @@ public class PlayerModos extends Player {
 
     private void notificarMudanca() {
         aoMudarTela.run();
-        if (ouvinte == null) {
-            return;
-        }
-        Faixa atual = getFaixaAtual();
-        if (atual != null) {
-            if (atual != ultimaNotificada || iniciandoPorPedido) {
-                ultimaNotificada = atual;
-                ouvinte.faixaIniciada(atual);
-            }
-        } else if (ultimaNotificada != null) {
-            ultimaNotificada = null;
-            ouvinte.reproducaoParada();
-        }
     }
 
     private void notificarErro(PlayerException erro) {
         aoErroTela.accept(erro);
-        if (ouvinte != null) {
-            ouvinte.erroReproducao(erro.getMessage());
-        }
     }
 
-    /** A tela registra aqiu, e o aviso também vai pro OuvintePlayer */
+    /** A tela registra aqui o que fazer quando algo muda */
     @Override
     public void setAoMudar(Runnable acao) {
         this.aoMudarTela = acao == null ? () -> { } : acao;
@@ -196,10 +162,6 @@ public class PlayerModos extends Player {
     @Override
     public void setAoErro(Consumer<PlayerException> acao) {
         this.aoErroTela = acao == null ? e -> { } : acao;
-    }
-
-    public void setOuvinte(OuvintePlayer ouvinte) {
-        this.ouvinte = ouvinte;
     }
 
     //Configuração
