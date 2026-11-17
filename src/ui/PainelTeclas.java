@@ -7,8 +7,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 /**
- * Quatro teclinhas do corpo do aparelho para organizar a biblioteca: criar e remover
- * playlist, adicionar e remover faixa. Cada uma só chama o painel que cuida do assunto.
+ * Teclinhas do corpo do aparelho para organizar a biblioteca: criar, remover e importar de uma
+ * pasta uma playlist; adicionar e remover faixa. Cada uma só chama o painel que cuida do assunto.
  */
 public class PainelTeclas extends GridPane {
 
@@ -32,10 +32,14 @@ public class PainelTeclas extends GridPane {
         removerFaixa.setOnAction(e -> faixas.remover());
         removerFaixa.disableProperty().bind(faixas.semSelecao());
 
+        Button importarPasta = tecla("btnImportarPasta", "Playlist de uma pasta…");
+        importarPasta.setOnAction(e -> playlists.importarPasta());
+
         add(novaPlaylist, 0, 0);
         add(removerPlaylist, 1, 0);
-        add(adicionarFaixa, 0, 1);
-        add(removerFaixa, 1, 1);
+        add(importarPasta, 0, 1, 2, 1);
+        add(adicionarFaixa, 0, 2);
+        add(removerFaixa, 1, 2);
 
         for (int i = 0; i < 2; i++) {
             ColumnConstraints coluna = new ColumnConstraints();

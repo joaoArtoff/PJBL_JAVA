@@ -12,6 +12,8 @@ as playlists e o histórico de reproduções são lembrados entre uma execução
 ## Funcionalidades
 
 - Criar e remover **playlists** (sem nome vazio e sem nomes repetidos).
+- Criar uma **playlist a partir de uma pasta** (**Playlist de uma pasta…**): o nome da playlist é o nome da pasta e
+  cada `.mp3` dela vira uma música, em ordem alfabética (subpastas não entram).
 - Adicionar **músicas** (título, artista, álbum) e **episódios de podcast** (título, programa, número do episódio)
   escolhendo o arquivo `.mp3`; remover faixas. O mesmo arquivo não entra duas vezes na mesma playlist.
 - **Tocar de verdade**: play/pausa, parar, faixa anterior e próxima, barra de progresso (clique ou arraste) e volume.
@@ -78,7 +80,8 @@ outro computador, a faixa continua na playlist e o erro "Arquivo não encontrado
 src/
 ├── excecoes/   exceções do player (raiz: PlayerException)
 ├── modelo/     domínio e regras: Faixa, Musica, EpisodioPodcast, Playlist, Biblioteca, Historico,
-│               RegistroHistorico, Player, Reprodutor, RepositorioHistorico, RepositorioBiblioteca
+│               RegistroHistorico, Player, Reprodutor, ImportadorDePasta, RepositorioHistorico,
+│               RepositorioBiblioteca
 ├── audio/      ReprodutorMp3: toca MP3 com o JavaFX Media
 ├── ui/         interface JavaFX (AppPlayer e os painéis da tela)
 └── Main.java   demonstração do modelo no console

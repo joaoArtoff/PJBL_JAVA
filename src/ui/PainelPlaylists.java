@@ -12,10 +12,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.DirectoryChooser;
 import modelo.Biblioteca;
+import modelo.ImportadorDePasta;
 import modelo.Player;
 import modelo.Playlist;
 
+import java.io.File;
 import java.util.Optional;
 
 /**
@@ -24,6 +27,8 @@ import java.util.Optional;
  * Os botões que chamam criar() e remover() ficam no corpo do aparelho (PainelTeclas).
  */
 public class PainelPlaylists extends VBox {
+
+    private static File ultimaPasta;
 
     private final Biblioteca biblioteca;
     private final Player player;
@@ -71,6 +76,30 @@ public class PainelPlaylists extends VBox {
         }
         try {
             Playlist nova = biblioteca.criarPlaylist(nome.get());
+            recarregar();
+            lista.getSelectionModel().select(nova);
+        } catch (PlayerException e) {
+            Alertas.erro(e);
+        }
+    }
+
+    /** Escolhe uma pasta do computador e cria uma playlist com os .mp3 dela. */
+    public void importarPasta() {
+        DirectoryChooser seletor = new DirectoryChooser();
+        seletor.setTitle("Escolher pasta de músicas");
+        File inicial = ultimaPasta != null ? ultimaPasta : new File(System.getProperty("user.home"), "Music");
+        if (!inicial.isDirectory()) {
+            inicial = new File(System.getProperty("user.home"));
+        }
+        seletor.setInitialDirectory(inicial);
+
+        File pasta = seletor.showDialog(getScene() == null ? null : getScene().getWindow());
+        if (pasta == null) {
+            return;
+        }
+        ultimaPasta = pasta.getParentFile();
+        try {
+            Playlist nova = new ImportadorDePasta().importar(biblioteca, pasta);
             recarregar();
             lista.getSelectionModel().select(nova);
         } catch (PlayerException e) {
