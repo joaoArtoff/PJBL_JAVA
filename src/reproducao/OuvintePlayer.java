@@ -1,6 +1,6 @@
-package Reproducao;
+package reproducao;
 
-import Modelo.Faixa;
+import modelo.Faixa;
 
 /**
  * É um complemento ao setAoMudar/setAoErro do Player: em vez de "algo mudou, olhe o estado"

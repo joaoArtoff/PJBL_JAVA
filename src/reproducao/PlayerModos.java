@@ -1,13 +1,13 @@
-package Reproducao;
+package reproducao;
 
-import Excecoes.FaixaInvalidaException;
-import Excecoes.PlayerException;
-import Modelo.Faixa;
-import Modelo.Historico;
-import Modelo.Player;
-import Modelo.Playlist;
-import Modelo.Reprodutor;
-import Modelo.RepositorioHistorico;
+import excecoes.FaixaInvalidaException;
+import excecoes.PlayerException;
+import modelo.Faixa;
+import modelo.Historico;
+import modelo.Player;
+import modelo.Playlist;
+import modelo.Reprodutor;
+import modelo.RepositorioHistorico;
 
 import java.util.function.Consumer;
 
