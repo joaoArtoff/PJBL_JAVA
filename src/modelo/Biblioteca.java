@@ -62,13 +62,4 @@ public class Biblioteca implements Serializable {
     public boolean isVazia() {
         return playlists.isEmpty();
     }
-
-    // Total de faixas somando todas as playlists (mostrado na barra de status). */
-    public int getTotalFaixas() {
-        int total = 0;
-        for (Playlist p : playlists) {
-            total += p.getTamanho();
-        }
-        return total;
-    }
 }

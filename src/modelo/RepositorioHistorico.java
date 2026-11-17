@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Lê e grava o Historico em um arquivo .txt 
@@ -47,24 +46,16 @@ public class RepositorioHistorico {
         }
         return new Historico(registros);
     }
+
+    /** Acrescenta o registro no fim do arquivo (cria o arquivo e a pasta na primeira vez). */
     public void adicionar(RegistroHistorico registro) throws PersistenciaException {
-        escrever(List.of(registro), true);
-    }
-
-    public void salvar(Historico historico) throws PersistenciaException {
-        escrever(historico.getRegistros(), false);
-    }
-
-    private void escrever(List<RegistroHistorico> registros, boolean acrescentar) throws PersistenciaException {
         try {
             File pasta = new File(arquivo).getParentFile();
             if (pasta != null) {
                 pasta.mkdirs();     // cria a pasta se ainda não existir
             }
-            try (FileWriter escritor = new FileWriter(arquivo, StandardCharsets.UTF_8, acrescentar)) {
-                for (RegistroHistorico r : registros) {
-                    escritor.write(paraLinha(r) + System.lineSeparator());
-                }
+            try (FileWriter escritor = new FileWriter(arquivo, StandardCharsets.UTF_8, true)) {
+                escritor.write(paraLinha(registro) + System.lineSeparator());
             }
         } catch (IOException e) {
             throw new PersistenciaException("Não foi possível salvar o histórico em " + arquivo, e);

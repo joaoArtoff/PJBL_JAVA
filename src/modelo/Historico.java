@@ -35,30 +35,7 @@ public class Historico {
         return resultado;
     }
 
-    public ArrayList<RegistroHistorico> getRegistros() {
-        return new ArrayList<>(registros);
-    }
-
     public int getTotal() {
         return registros.size();
-    }
-
-    public boolean isVazio() {
-        return registros.isEmpty();
-    }
-
-    /** Quantas vezes uma faixa pelo título aparece no histórico. */
-    public int contar(String titulo) {
-        int vezes = 0;
-        for (RegistroHistorico r : registros) {
-            if (r.getTitulo().equalsIgnoreCase(titulo.trim())) {
-                vezes++;
-            }
-        }
-        return vezes;
-    }
-
-    public void limpar() {
-        registros.clear();
     }
 }

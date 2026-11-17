@@ -49,11 +49,11 @@ public class Main {
             System.out.println("\nDescricao do podcast depois de pausar: " + episodio.getDescricao());
 
             // 5) Histórico
-            RepositorioHistorico repositorio = new RepositorioHistorico("dados/historico.txt");
+            // O histórico da demonstração fica na pasta temporária, para não se misturar com o histórico real do app.
+            RepositorioHistorico repositorio = new RepositorioHistorico(pasta.resolve("historico.txt").toString());
             Historico historico = repositorio.carregar();
             System.out.println("\nRegistros que já estavam salvos ao abrir: " + historico.getTotal());
             for (Faixa f : favoritas.getFaixas()) {
-                f.registrarReproducao();
                 repositorio.adicionar(historico.registrar(f));
             }
             System.out.println("--- Historico (" + historico.getTotal() + " registros, ultimos 10) ---");
