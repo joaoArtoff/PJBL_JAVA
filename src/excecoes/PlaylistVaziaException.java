@@ -9,6 +9,6 @@ public class PlaylistVaziaException extends PlayerException {
 
     public PlaylistVaziaException(String nomePlaylist) {
         // Montamos a mensagem aqui dentro: quem lança só informa o nome.
-        super("A Playlist " + nomePlaylist + "está vazia. Adicione músicar primeiro.");
+        super("A playlist \"" + nomePlaylist + "\" está vazia. Adicione faixas primeiro.");
     }
 }

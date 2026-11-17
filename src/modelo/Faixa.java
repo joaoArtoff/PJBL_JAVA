@@ -9,7 +9,6 @@ public abstract class Faixa implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String titulo;
-    private int vezesTocada;
     // "final": depois de criada, a faixa sempre aponta para o mesmo arquivo.
     private final String caminhoArquivo;
 
@@ -17,7 +16,6 @@ public abstract class Faixa implements Serializable {
         setTitulo(titulo);
         validarCaminho(caminhoArquivo);
         this.caminhoArquivo = caminhoArquivo;
-        this.vezesTocada = 0;
     }
 
     //Metodo para validar o arquivo de entrada, vendo se tem um arquivo em sí, se está em mp3 e se seu caminho está certo
@@ -54,14 +52,7 @@ public abstract class Faixa implements Serializable {
      */
     public void registrarPosicao(double segundos) {};
 
-    //Chamado pelo Player toda a vez que a faixa começa a tocar.
-    // CORRIGIDO: antes se chamava registrarPosicao() (mesmo nome do método de posição, confundia)
-    public void registrarReproducao() {
-        vezesTocada++;
-    }
-
-    //Gets para pegar a quantidade de vezes tocadas, o título escolhido e o caminho do arquivo.
-    public int getVezesTocadas() { return vezesTocada; }
+    //Gets para pegar o título escolhido e o caminho do arquivo.
     public String getTitulo() { return titulo; }
     public String getCaminhoArquivo() { return caminhoArquivo; }
 
@@ -77,14 +68,34 @@ public abstract class Faixa implements Serializable {
     public boolean arquivoExiste() { return new File(caminhoArquivo).isFile(); }
 
     /**
-     * toString() é usado pela ListView da interface para mostrar cada item.
+     * Duas faixas são a mesma se apontam para o mesmo arquivo.
+     * Sem isso, a Playlist (que usa contains) só reconheceria a MESMA instância,
+     * e adicionar o mesmo .mp3 duas vezes pela interface criaria duplicatas.
+     */
+    @Override
+    public boolean equals(Object outro) {
+        if (this == outro) {
+            return true;
+        }
+        if (!(outro instanceof Faixa)) {
+            return false;
+        }
+        return caminhoArquivo.equals(((Faixa) outro).caminhoArquivo);
+    }
+
+    @Override
+    public int hashCode() {
+        return caminhoArquivo.hashCode();
+    }
+
+    /**
+     * A faixa em texto, para depurar e para o Main de console.
      * Repare: ele chama getTipo() e getDescricao(), que são ABSTRATOS.
      * Em tempo de execução o Java chama a versão da subclasse real
      * Além do polimorfismo de musica e podcast
      */
     @Override
     public String toString() {
-        return "[" + getTipo() + "] " + titulo + "  —  " + getDescricao()
-                + "  (tocada " + vezesTocada + "x)";
+        return "[" + getTipo() + "] " + titulo + "  —  " + getDescricao();
     }
 }
