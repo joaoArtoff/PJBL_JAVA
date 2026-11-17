@@ -69,9 +69,10 @@ outro computador, a faixa continua na playlist e o erro "Arquivo não encontrado
 
 | Integrante | O que fez |
 |---|---|
-| [NOME 1] | |
-| [NOME 2] | |
-| [NOME 3] | |
+| Lucas Dal Pra Brascher | Interface gráfica |
+| Lucas Lorenzo Kosake de Mesquita Fialho | |
+| Guilherme Schuchardt | |
+| Joao Vitor Rodrigues Artoff | |
 
 ## Estrutura
 
