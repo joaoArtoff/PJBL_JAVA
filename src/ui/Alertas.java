@@ -27,7 +27,7 @@ public final class Alertas {
         String mensagem = (e instanceof PlayerException)
                 ? e.getMessage()
                 : "Algo inesperado aconteceu: " + e.getMessage();
-        Alert alerta = new Alert(Alert.AlertType.NONE, mensagem, botao("Entendi", ButtonData.OK_DONE));
+        Alert alerta = new Alert(Alert.AlertType.NONE, mensagem, new ButtonType("Entendi", ButtonData.OK_DONE));
         alerta.setTitle("Atenção");
         alerta.setHeaderText("Não foi possível continuar");
         estilizar(alerta);
@@ -36,7 +36,7 @@ public final class Alertas {
     }
 
     public static void aviso(String titulo, String mensagem) {
-        Alert alerta = new Alert(Alert.AlertType.NONE, mensagem, botao("Ok", ButtonData.OK_DONE));
+        Alert alerta = new Alert(Alert.AlertType.NONE, mensagem, new ButtonType("Ok", ButtonData.OK_DONE));
         alerta.setTitle(titulo);
         alerta.setHeaderText(titulo);
         estilizar(alerta);
@@ -44,8 +44,8 @@ public final class Alertas {
     }
 
     public static boolean confirmar(String titulo, String mensagem) {
-        ButtonType sim = botao("Sim", ButtonData.YES);
-        ButtonType nao = botao("Não", ButtonData.NO);
+        ButtonType sim = new ButtonType("Sim", ButtonData.YES);
+        ButtonType nao = new ButtonType("Não", ButtonData.NO);
         Alert alerta = new Alert(Alert.AlertType.NONE, mensagem, sim, nao);
         alerta.setTitle(titulo);
         alerta.setHeaderText(titulo);
@@ -55,8 +55,8 @@ public final class Alertas {
 
     /** Pergunta um texto curto (ex.: nome de uma playlist). Vazio se o usuário cancelar. */
     public static Optional<String> pedirTexto(String titulo, String rotulo, String botaoOk) {
-        ButtonType ok = botao(botaoOk, ButtonData.OK_DONE);
-        ButtonType cancelar = botao("Cancelar", ButtonData.CANCEL_CLOSE);
+        ButtonType ok = new ButtonType(botaoOk, ButtonData.OK_DONE);
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
 
         TextField campo = new TextField();
         VBox conteudo = new VBox(8, new Label(rotulo), campo);
@@ -85,9 +85,5 @@ public final class Alertas {
         if (dona != null) {
             dialogo.initOwner(dona);
         }
-    }
-
-    private static ButtonType botao(String texto, ButtonData tipo) {
-        return new ButtonType(texto, tipo);
     }
 }

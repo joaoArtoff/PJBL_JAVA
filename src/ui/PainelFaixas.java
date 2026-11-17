@@ -1,10 +1,9 @@
 package ui;
 
 import excecoes.PlayerException;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -12,7 +11,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.text.TextAlignment;
 import modelo.Faixa;
 import modelo.Player;
 import modelo.Playlist;
@@ -20,39 +22,30 @@ import modelo.Playlist;
 import java.util.Optional;
 
 /**
- * "Encarte": as faixas da playlist selecionada. Duplo clique (ou Enter) toca a faixa.
+ * Faixas da playlist selecionada, dentro da tela do aparelho. Duplo clique (ou Enter) toca.
  *
- * Cada linha mostra tipo, título e descrição chamando só os métodos de Faixa
- * (getTipo, getDescricao, getTitulo). A mesma célula serve para música e para podcast,
+ * Cada linha mostra título, descrição e tipo chamando só os métodos de Faixa
+ * (getTitulo, getDescricao, getTipo). A mesma célula serve para música e para podcast,
  * porque cada subclasse responde do seu jeito (polimorfismo).
  */
 public class PainelFaixas extends VBox {
 
     private final Player player;
     private final ReadOnlyObjectProperty<Playlist> playlistSelecionada;
-    private final Runnable aoAlterarPlaylist;
 
-    private final Label titulo = new Label();
     private final ListView<Faixa> lista = new ListView<>();
     private final Label placeholder = new Label();
-    private final Button botaoAdicionar = new Button("+ Adicionar faixa");
-    private final Button botaoRemover = new Button("Remover faixa");
 
-    public PainelFaixas(Player player, ReadOnlyObjectProperty<Playlist> playlistSelecionada, Runnable aoAlterarPlaylist) {
+    public PainelFaixas(Player player, ReadOnlyObjectProperty<Playlist> playlistSelecionada) {
         this.player = player;
         this.playlistSelecionada = playlistSelecionada;
-        this.aoAlterarPlaylist = aoAlterarPlaylist;
 
-        getStyleClass().addAll("painel", "painel-papel");
-        setSpacing(10);
-        setPadding(new Insets(14));
-
-        titulo.getStyleClass().add("titulo-painel");
-
+        getStyleClass().add("painel-lista");
         lista.setId("listaFaixas");
+        lista.getStyleClass().add("lista-visor");
         lista.setCellFactory(l -> new CelulaFaixa());
         placeholder.getStyleClass().add("texto-vazio");
-        placeholder.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        placeholder.setTextAlignment(TextAlignment.CENTER);
         lista.setPlaceholder(placeholder);
         lista.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
@@ -60,24 +53,20 @@ public class PainelFaixas extends VBox {
             }
         });
         VBox.setVgrow(lista, Priority.ALWAYS);
-
-        botaoAdicionar.setId("btnAdicionarFaixa");
-        botaoAdicionar.getStyleClass().add("botao-papel");
-        botaoAdicionar.setOnAction(e -> adicionar());
-        botaoAdicionar.disableProperty().bind(playlistSelecionada.isNull());
-
-        botaoRemover.setId("btnRemoverFaixa");
-        botaoRemover.getStyleClass().addAll("botao-papel", "botao-perigo");
-        botaoRemover.setOnAction(e -> remover());
-        botaoRemover.disableProperty().bind(lista.getSelectionModel().selectedItemProperty().isNull());
-
-        HBox botoes = new HBox(8, botaoAdicionar, botaoRemover);
-        botoes.setAlignment(Pos.CENTER_LEFT);
-
-        getChildren().addAll(titulo, lista, botoes);
+        getChildren().add(lista);
 
         playlistSelecionada.addListener((o, antes, agora) -> recarregar());
         recarregar();
+    }
+
+    /** Verdadeiro enquanto nenhuma playlist está escolhida (desliga o botão Adicionar). */
+    public BooleanBinding semPlaylist() {
+        return playlistSelecionada.isNull();
+    }
+
+    /** Verdadeiro enquanto nenhuma faixa está escolhida (desliga o botão Remover). */
+    public BooleanBinding semSelecao() {
+        return lista.getSelectionModel().selectedItemProperty().isNull();
     }
 
     /** Redesenha as linhas (vezes tocada, "Parou em", marca de "tocando") sem mexer na seleção. */
@@ -85,11 +74,11 @@ public class PainelFaixas extends VBox {
         lista.refresh();
     }
 
-    /** Usada pelo botão play quando nada está tocando: toca a faixa escolhida, ou a primeira. */
+    /** Usada pelo botão central quando nada está tocando: toca a faixa escolhida, ou a primeira. */
     public void tocarSelecionadaOuPrimeira() {
         Playlist playlist = playlistSelecionada.get();
         if (playlist == null) {
-            Alertas.aviso("Escolha uma playlist", "Selecione uma playlist na coluna da esquerda para tocar.");
+            Alertas.aviso("Escolha uma playlist", "Selecione uma playlist na tela para tocar.");
             return;
         }
         int indice = lista.getSelectionModel().getSelectedIndex();
@@ -115,17 +104,15 @@ public class PainelFaixas extends VBox {
     private void recarregar() {
         Playlist playlist = playlistSelecionada.get();
         if (playlist == null) {
-            titulo.setText("ENCARTE");
-            placeholder.setText("Crie ou escolha uma playlist\npara ver as faixas dela aqui.");
+            placeholder.setText("Escolha uma playlist\npara ver as faixas.");
             lista.getItems().clear();
             return;
         }
-        titulo.setText("ENCARTE  ·  " + playlist.getNome().toUpperCase());
-        placeholder.setText("Esta playlist está vazia.\nClique em + Adicionar faixa.");
+        placeholder.setText("Playlist vazia.\nUse Adicionar faixa.");
         lista.getItems().setAll(playlist.getFaixas());   // a Playlist devolve uma cópia
     }
 
-    private void adicionar() {
+    public void adicionar() {
         Playlist playlist = playlistSelecionada.get();
         if (playlist == null) {
             return;
@@ -142,13 +129,13 @@ public class PainelFaixas extends VBox {
             recarregar();
             lista.getSelectionModel().selectLast();
             lista.scrollTo(lista.getItems().size() - 1);
-            aoAlterarPlaylist.run();
+            player.playlistMudou();
         } catch (PlayerException e) {
             Alertas.erro(e);
         }
     }
 
-    private void remover() {
+    public void remover() {
         Playlist playlist = playlistSelecionada.get();
         Faixa faixa = lista.getSelectionModel().getSelectedItem();
         if (playlist == null || faixa == null) {
@@ -163,33 +150,31 @@ public class PainelFaixas extends VBox {
         }
         playlist.removerFaixa(faixa);
         recarregar();
-        aoAlterarPlaylist.run();
+        player.playlistMudou();
     }
 
-    /** Uma linha do encarte: número, selo do tipo, título, descrição e quantas vezes já tocou. */
+    /** Uma linha da lista: título, descrição, tipo e um ícone se é a faixa em reprodução. */
     private class CelulaFaixa extends ListCell<Faixa> {
-        private final Label numero = new Label();
-        private final Label selo = new Label();
         private final Label nome = new Label();
         private final Label descricao = new Label();
-        private final Label vezes = new Label();
-        private final Label marca = new Label("▶");
+        private final Label tipo = new Label();
+        private final SVGPath marca = Icones.icone(Icones.PLAY, "marcador-tocando");
         private final HBox caixa;
 
         CelulaFaixa() {
-            numero.getStyleClass().add("faixa-numero");
-            selo.getStyleClass().add("faixa-selo");
-            nome.getStyleClass().add("faixa-titulo");
-            descricao.getStyleClass().add("faixa-descricao");
-            vezes.getStyleClass().add("faixa-vezes");
-            marca.getStyleClass().add("marca-tocando");
+            nome.getStyleClass().add("item-titulo");
+            descricao.getStyleClass().add("item-detalhe");
+            tipo.getStyleClass().add("item-detalhe");
+            nome.setMinWidth(0);
+            descricao.setMinWidth(0);
 
-            // Colunas fixas (marca, número, selo e contagem) para as linhas ficarem alinhadas.
-            marca.setMinWidth(12);
-            VBox textos = new VBox(2, nome, descricao);
+            VBox textos = new VBox(1, nome, descricao);
+            textos.setMinWidth(0);
             HBox.setHgrow(textos, Priority.ALWAYS);
-            caixa = new HBox(10, marca, numero, textos, selo, vezes);
+            tipo.setMinWidth(Region.USE_PREF_SIZE);   // o título encolhe (com "…"), o tipo não
+            caixa = new HBox(8, textos, tipo, Celulas.reservaMarcador(marca));
             caixa.setAlignment(Pos.CENTER_LEFT);
+            Celulas.ajustarLargura(this, caixa);
 
             setOnMouseClicked(e -> {
                 if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2 && !isEmpty()) {
@@ -201,23 +186,17 @@ public class PainelFaixas extends VBox {
         @Override
         protected void updateItem(Faixa faixa, boolean vazia) {
             super.updateItem(faixa, vazia);
-            getStyleClass().remove("tocando");
             if (vazia || faixa == null) {
                 setGraphic(null);
                 return;
             }
-            numero.setText(String.format("%02d", getIndex() + 1));
-            selo.setText(faixa.getTipo().toUpperCase());
             nome.setText(faixa.getTitulo());
             descricao.setText(faixa.getDescricao());
-            int n = faixa.getVezesTocadas();
-            vezes.setText(n == 0 ? "" : n + "x");
+            tipo.setText(faixa.getTipo());
 
             boolean tocandoAgora = player.getFaixaAtual() == faixa;
             marca.setVisible(tocandoAgora);
-            if (tocandoAgora) {
-                getStyleClass().add("tocando");
-            }
+            Icones.trocar(marca, tocandoAgora && !player.isTocando() ? Icones.PAUSA : Icones.PLAY);
             setGraphic(caixa);
         }
     }

@@ -3,6 +3,7 @@ package ui;
 import excecoes.FaixaInvalidaException;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -49,7 +50,7 @@ public class DialogoFaixa {
     private Faixa resultado;
 
     public static Optional<Faixa> mostrar() {
-        return new DialogoFaixa().abrir();
+        return new DialogoFaixa().dialogo.showAndWait();
     }
 
     private DialogoFaixa() {
@@ -61,7 +62,7 @@ public class DialogoFaixa {
         campoArquivo.setEditable(false);
         campoArquivo.setPromptText("Nenhum arquivo escolhido");
         Button escolher = new Button("Escolher .mp3…");
-        escolher.getStyleClass().add("botao-papel");
+        escolher.getStyleClass().add("tecla-prata");
         escolher.setOnAction(e -> escolherArquivo());
         HBox linhaArquivo = new HBox(8, campoArquivo, escolher);
         HBox.setHgrow(campoArquivo, Priority.ALWAYS);
@@ -84,27 +85,28 @@ public class DialogoFaixa {
         grade.add(rotulo("Título"), 0, linha);
         grade.add(campoTitulo, 1, linha++);
 
-        // Campos de música
+        // Música e podcast usam as mesmas duas linhas; só os campos do tipo marcado aparecem.
+        int primeiraLinha = linha++;
+        int segundaLinha = linha++;
         Label rotArtista = rotulo("Artista");
         Label rotAlbum = rotulo("Álbum");
-        grade.add(rotArtista, 0, linha);
-        grade.add(campoArtista, 1, linha++);
-        grade.add(rotAlbum, 0, linha);
-        grade.add(campoAlbum, 1, linha++);
+        grade.add(rotArtista, 0, primeiraLinha);
+        grade.add(campoArtista, 1, primeiraLinha);
+        grade.add(rotAlbum, 0, segundaLinha);
+        grade.add(campoAlbum, 1, segundaLinha);
 
-        // Campos de podcast (ocupam as mesmas linhas, aparecem só quando "Podcast" está marcado)
         Label rotPrograma = rotulo("Programa");
         Label rotEpisodio = rotulo("Nº do episódio");
-        grade.add(rotPrograma, 0, linha - 2);
-        grade.add(campoPrograma, 1, linha - 2);
-        grade.add(rotEpisodio, 0, linha - 1);
-        grade.add(campoEpisodio, 1, linha - 1);
+        grade.add(rotPrograma, 0, primeiraLinha);
+        grade.add(campoPrograma, 1, primeiraLinha);
+        grade.add(rotEpisodio, 0, segundaLinha);
+        grade.add(campoEpisodio, 1, segundaLinha);
 
-        for (javafx.scene.Node n : new javafx.scene.Node[]{rotArtista, campoArtista, rotAlbum, campoAlbum}) {
+        for (Node n : new Node[]{rotArtista, campoArtista, rotAlbum, campoAlbum}) {
             n.visibleProperty().bind(rbMusica.selectedProperty());
             n.managedProperty().bind(rbMusica.selectedProperty());
         }
-        for (javafx.scene.Node n : new javafx.scene.Node[]{rotPrograma, campoPrograma, rotEpisodio, campoEpisodio}) {
+        for (Node n : new Node[]{rotPrograma, campoPrograma, rotEpisodio, campoEpisodio}) {
             n.visibleProperty().bind(rbPodcast.selectedProperty());
             n.managedProperty().bind(rbPodcast.selectedProperty());
         }
@@ -115,7 +117,7 @@ public class DialogoFaixa {
         mensagemErro.managedProperty().bind(mensagemErro.textProperty().isNotEmpty());
         mensagemErro.visibleProperty().bind(mensagemErro.textProperty().isNotEmpty());
         grade.add(mensagemErro, 0, linha, 2, 1);
-        for (javafx.scene.Node n : new javafx.scene.Node[]{campoArquivo, campoTitulo, campoArtista, campoAlbum, campoPrograma, campoEpisodio}) {
+        for (Node n : new Node[]{campoArquivo, campoTitulo, campoArtista, campoAlbum, campoPrograma, campoEpisodio}) {
             GridPane.setHgrow(n, Priority.ALWAYS);
         }
 
@@ -139,10 +141,6 @@ public class DialogoFaixa {
             }
         });
         dialogo.setResultConverter(b -> b == adicionar ? resultado : null);
-    }
-
-    private Optional<Faixa> abrir() {
-        return dialogo.showAndWait();
     }
 
     private Faixa montarFaixa() throws FaixaInvalidaException {
