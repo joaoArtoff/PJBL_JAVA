@@ -67,12 +67,10 @@ outro computador, a faixa continua na playlist e o erro "Arquivo não encontrado
 
 ## Integrantes
 
-| Integrante | O que fez |
-|---|---|
-| Lucas Dal Pra Brascher | Interface gráfica |
-| Lucas Lorenzo Kosake de Mesquita Fialho | |
-| Guilherme Schuchardt | |
-| Joao Vitor Rodrigues Artoff | |
+- Lucas Dal Pra Brascher
+- Lucas Lorenzo Kosake de Mesquita Fialho
+- Guilherme Schuchardt
+- Joao Vitor Rodrigues Artoff
 
 ## Estrutura
 
