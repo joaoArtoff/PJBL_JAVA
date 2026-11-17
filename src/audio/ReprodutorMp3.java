@@ -20,12 +20,20 @@ import java.util.function.Consumer;
  */
 public class ReprodutorMp3 implements Reprodutor {
 
+    /**
+     * Quanto esperar o arquivo ficar pronto antes de desistir. É uma escolha, não um valor medido:
+     * um MP3 válido costuma carregar em menos de 1 segundo, mas um arquivo grande num disco externo
+     * que ainda está acordando, ou num arquivo do iCloud ainda não baixado, pode demorar bem mais.
+     * Passando disso, dizemos que o arquivo não parece um MP3 válido.
+     */
+    private static final double LIMITE_CARREGAMENTO_SEGUNDOS = 10;
+
     private MediaPlayer player;
     private boolean pronto;
     private boolean querTocar;
     private double posicaoPendente;
     private double volume = 0.8;
-    private final PauseTransition limiteCarregamento = new PauseTransition(Duration.seconds(4));
+    private final PauseTransition limiteCarregamento = new PauseTransition(Duration.seconds(LIMITE_CARREGAMENTO_SEGUNDOS));
 
     private Runnable aoTerminar = () -> { };
     private Consumer<FaixaInvalidaException> aoFalhar = e -> { };
@@ -44,7 +52,7 @@ public class ReprodutorMp3 implements Reprodutor {
                 limiteCarregamento.stop();
                 pronto = true;
                 if (posicaoPendente > 0) {
-                    novo.seek(javafx.util.Duration.seconds(posicaoPendente));
+                    novo.seek(Duration.seconds(posicaoPendente));
                 }
                 if (querTocar) {
                     novo.play();
@@ -110,7 +118,7 @@ public class ReprodutorMp3 implements Reprodutor {
     public void buscar(double segundos) {
         posicaoPendente = Math.max(0, segundos);
         if (player != null && pronto) {
-            player.seek(javafx.util.Duration.seconds(posicaoPendente));
+            player.seek(Duration.seconds(posicaoPendente));
         }
     }
 
