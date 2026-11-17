@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import modelo.Player;
 
 /**
  * Teclinhas do corpo do aparelho para organizar a biblioteca: criar, remover e importar de uma
@@ -12,7 +13,7 @@ import javafx.scene.layout.Priority;
  */
 public class PainelTeclas extends GridPane {
 
-    public PainelTeclas(PainelPlaylists playlists, PainelFaixas faixas) {
+    public PainelTeclas(PainelPlaylists playlists, PainelFaixas faixas, Player player) {
         setHgap(8);
         setVgap(8);
         setAlignment(Pos.CENTER);
@@ -37,7 +38,11 @@ public class PainelTeclas extends GridPane {
 
         add(novaPlaylist, 0, 0);
         add(removerPlaylist, 1, 0);
+        Button historico = tecla("btnHistorico", "Histórico");
+        historico.setOnAction(e -> DialogoHistorico.mostrar(player.getHistorico()));
+
         add(importarPasta, 0, 1, 2, 1);
+        add(historico, 0, 3, 2, 1);
         add(adicionarFaixa, 0, 2);
         add(removerFaixa, 1, 2);
 

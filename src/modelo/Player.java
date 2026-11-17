@@ -161,6 +161,7 @@ public class Player {
 
     public double getPosicao() { return reprodutor.getPosicao(); }
     public double getDuracao() { return reprodutor.getDuracao(); }
+    public Historico getHistorico() { return historico; }
     public Faixa getFaixaAtual() { return faixaAtual; }
     public Playlist getPlaylistAtual() { return playlist; }
     public boolean isTocando() { return tocando; }

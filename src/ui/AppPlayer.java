@@ -77,7 +77,7 @@ public class AppPlayer extends Application {
         Visor visor = new Visor(player, playlists, faixas, agora);
         PainelDisco disco = new PainelDisco(player);
         RodaDeClique roda = new RodaDeClique(player, faixas::tocarSelecionadaOuPrimeira);
-        PainelTeclas teclas = new PainelTeclas(playlists, faixas);
+        PainelTeclas teclas = new PainelTeclas(playlists, faixas, player);
 
         // O Player avisa a tela sempre que algo muda; a tela nunca adivinha o estado sozinha.
         player.setAoMudar(() -> {
